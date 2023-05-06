@@ -19,7 +19,6 @@ On Windows:
 '''
 import openai
 
-
 class GPT():
     ''' make queries to gpt from a given API '''
     def __init__(self,apikey):

@@ -18,8 +18,9 @@ On Windows:
 % $env:APIKEY="....." # in powershell
 % python gptwebapp.py
 '''
-from flask import request,redirect,url_for,Flask
+from flask import request,redirect,url_for,Flask, render_template
 from gpt import GPT
+import openai
 import os
 
 app = Flask(__name__)
@@ -32,11 +33,19 @@ app.secret_key = b'_5#y2L"F4Q789789uioujkkljkl...8z\n\xec]/'
 def index():
     ''' display a link to the general query page '''
     print('processing / route')
-    return f'''
-        <h1>GPT Demo</h1>
-        <a href="{url_for('gptdemo')}">Ask questions to GPT</a>
-    '''
+    return render_template("home.html")
 
+@app.route('/index')
+def index_page():
+    return render_template("index.html")
+
+@app.route('/about')
+def about():
+    return render_template("about.html")
+
+@app.route('/team')
+def team():
+    return render_template("team.html")
 
 @app.route('/gptdemo', methods=['GET', 'POST'])
 def gptdemo():
@@ -65,6 +74,20 @@ def gptdemo():
             <p><input type=submit value="get response">
         </form>
         '''
+    
+@app.route('/alex', methods=['GET', 'POST'])
+def alex():
+    ''' handle a get request by sending a form 
+        and a post request by returning the GPT response
+    '''
+    if request.method == 'POST':
+        prompt = request.form['prompt']
+        or_prompt = prompt
+        prompt = "Give the healthier food substitutes. Include the change in calories and protein. \"" + prompt + "\""
+        answer = gptAPI.getResponse(prompt)
+        return render_template("alex.html", show_answer=True, prompt=prompt, answer=answer, or_prompt=or_prompt)
+    else:
+        return render_template("alex.html", show_answer=False)
 
 if __name__=='__main__':
     # run the code on port 5001, MacOS uses port 5000 for its own service :(
